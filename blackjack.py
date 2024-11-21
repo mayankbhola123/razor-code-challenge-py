@@ -8,23 +8,25 @@ class Blackjack:
         Initialize the Blackjack table with a specified number of decks.
         :param num_decks: Number of decks to use at the table.
         """
-        self.blackjack_cards = []
+        self.num_decks=num_decks
+        self.cards = []
         self.active_hands = defaultdict(list) # key: player_name and value: [cards they hold]
         for _ in range(num_decks):
             new_deck = Deck()
-            self.blackjack_cards.extend(new_deck.cards)
-        # print(self.blackjack_cards)
-        # print(len(self.blackjack_cards))
+            self.cards.extend(new_deck.cards)
 
     def reset(self):
         """Reset the table by shuffling all decks together and clearing active hands."""
         # return all the cards back to deck
         self.__init__()
-        # self.active_hands = {}
 
-        random.shuffle(self.blackjack_cards)
+        random.shuffle(self.cards)
 
     def draw(self):
+        """
+        Draw a card from the deck.
+        :return: The card drawn from the deck.
+        """
         if self.cards:
             return self.cards.pop()
         else:
@@ -35,15 +37,15 @@ class Blackjack:
         Deal two cards to a player.
         :param player: The player's identifier (e.g., a name or number).
         """
-        self.active_hands[player].append(self.draw)
-        self.active_hands[player].append(self.draw)
+        self.active_hands[player].append(self.draw())
+        self.active_hands[player].append(self.draw())
 
     def hit(self, player):
         """
         Add a card to the player's hand.
         :param player: The player's identifier.
         """
-        self.active_hands[player].append(self.draw)
+        self.active_hands[player].append(self.draw())
 
     def split(self, player):
         """
@@ -64,8 +66,8 @@ class Blackjack:
             
             # put the second card as a new player with key same as "startsWith" of the existing player
             # add 1 card
-            self.active_hands[player+"1"].append(second_card)
-            self.active_hands[player+"1"].append(self.draw)
+            self.active_hands[player+"_split"].append(second_card)
+            self.active_hands[player+"_split"].append(self.draw)
 
     def fold(self, player):
         """
@@ -73,8 +75,8 @@ class Blackjack:
         :param player: The player's identifier.
         """
         del self.active_hands[player]
-        if (player+"1") in self.active_hands.keys():
-            del self.active_hands[player+"1"]
+        if (player+"_split") in self.active_hands.keys():
+            del self.active_hands[player+"_split"]
 
 
 
